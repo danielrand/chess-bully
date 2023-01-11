@@ -1,20 +1,17 @@
 var board = null
 var game = new Chess()
 
-// return random move
-var calculateBestMove =function(game) {
-  var newGameMoves = game.moves();
-  return newGameMoves[Math.floor(Math.random() * newGameMoves.length)];
-};
-
 var makeBestMove = function () {
-  var bestMove = calculateBestMove(game);
-  game.move(bestMove);
+  computer_move = minimax(game, 3 ,false)
+  console.log("Computer Move: " + computer_move[0]);
+  console.log("Eval: " + computer_move[1]);
+  console.log("Positions Evaluated: " + positions_evaluated);
+  game.move(computer_move[0]);
   board.position(game.fen());
   if (game.game_over()) {
       alert('Game over');
   }
-};
+}
 
 function onDragStart (source, piece, position, orientation) {
   // do not pick up pieces if the game is over
@@ -27,7 +24,6 @@ function onDragStart (source, piece, position, orientation) {
   }
 }
 
-
 function onDrop (source, target) {
   // see if the move is legal
   var move = game.move({
@@ -35,10 +31,8 @@ function onDrop (source, target) {
     to: target,
     promotion: 'q' // NOTE: always promote to a queen for example simplicity
   })
-
   // illegal move
   if (move === null) return 'snapback'
-
   window.setTimeout(makeBestMove, 250);
 }
 
@@ -56,4 +50,3 @@ var config = {
   onSnapEnd: onSnapEnd
 }
 board = Chessboard('myBoard', config)
-$(window).resize(board.resize)
