@@ -53,35 +53,42 @@ function minimax_util(game, level, alpha, beta, maximizingPlayer) {
 }
 
 function evaluateBoard (game) {
-    var totalEvaluation = 0;
+    var totalEvaluation = 0
     squares = game.SQUARES
-    for (var i = 0; i < 64; i++) {
-      totalEvaluation = totalEvaluation + getPieceValue(game.get(squares[i]));
+    var row = 0, col = 0
+    for (var i = 0; i < 64; i++) {  
+        totalEvaluation = totalEvaluation + getPieceValue(game.get(squares[i]), row, col++);
+        if (col == 8) {
+            row++
+            col = 0;
+        }
     }
     return totalEvaluation;
 }
 
-function getPieceValue (piece) {
+function getPieceValue (piece, row, col) {
     if (piece === null) {
         return 0;
     }
-    var getAbsoluteValue = function (piece) {
+    var getAbsoluteValue = function (piece, isWhite, row, col) {
         if (piece.type === 'p') {
-            return 10;
+            return 100 + (isWhite ? whitePawnOffset[row][col] : blackPawnOffset[row][col])
         } else if (piece.type === 'r') {
-            return 50;
+            return 500 + (isWhite ? whiteRookOffset[row][col] : blackRookOffset[row][col])
         } else if (piece.type === 'n') {
-            return 30;
+            return 320 + (isWhite ? whiteKnightOffset[row][col] : blackKnightOffset[row][col])
         } else if (piece.type === 'b') {
-            return 30 ;
+            return 330 + (isWhite ? whiteBishopOffset[row][col] : blackBishopOffset[row][col])
         } else if (piece.type === 'q') {
-            return 90;
+            return 900 + (isWhite ? whiteQueenOffset[row][col] : blackQueenOffset[row][col])
         } else if (piece.type === 'k') {
-            return 900;
+            // TODO: Add end game king evaluation
+            return 20000 + (isWhite ? whiteKingMiddleGameOffset[row][col] : blackKingMiddleGameOffset[row][col])
         }
         throw "Unknown piece type: " + piece.type;
     };
 
-    var absoluteValue = getAbsoluteValue(piece, piece.color === 'w');
+    var absoluteValue = getAbsoluteValue(piece, piece.color === 'w', row, col);
+
     return piece.color === 'w' ? absoluteValue : -absoluteValue;
 };

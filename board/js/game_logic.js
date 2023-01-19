@@ -8,9 +8,6 @@ var makeBestMove = function () {
   console.log("Positions Evaluated: " + positions_evaluated);
   game.move(computer_move[0]);
   board.position(game.fen());
-  if (game.game_over()) {
-      alert('Game over');
-  }
 }
 
 function onDragStart (source, piece, position, orientation) {
@@ -33,7 +30,12 @@ function onDrop (source, target) {
   })
   // illegal move
   if (move === null) return 'snapback'
-  window.setTimeout(makeBestMove, 250);
+  window.setTimeout(makeBestMove,250);
+  console.log(game)
+  if (game.game_over()) {
+    console.log(game.pgn())
+    alert('Game over');
+  }
 }
 
 // update the board position after the piece snap
